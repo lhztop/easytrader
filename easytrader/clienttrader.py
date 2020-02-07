@@ -319,12 +319,15 @@ class ClientTrader(IClientTrader):
 
     def _close_prompt_windows(self):
         self.wait(1)
-        for window in self._app.windows(class_name="#32770", visible_only=True):
-            title = window.window_text()
-            if title != self._config.TITLE:
-                logging.info("close " + title)
-                window.close()
-                self.wait(0.2)
+        try:
+            for window in self._app.windows(class_name="#32770", visible_only=True):
+                title = window.window_text()
+                if title != self._config.TITLE:
+                    logging.info("close " + title)
+                    window.close()
+                    self.wait(0.2)
+        except:
+            pass
         self.wait(1)
 
     def close_pormpt_window_no_wait(self):
