@@ -223,6 +223,7 @@ class ClientTrader(IClientTrader):
         """
         code = security[-6:]
         self._type_edit_control_keys(self._config.TRADE_SECURITY_CONTROL_ID, code)
+        self.wait(0.1)
         if ttype is not None:
             retry = 0
             retry_max = 10
@@ -233,6 +234,7 @@ class ClientTrader(IClientTrader):
                 except:
                     retry += 1
                     self.wait(0.1)
+        self.wait(0.1)
         self._set_market_trade_params(security, amount, limit_price=limit_price)
         self._submit_trade()
 
@@ -403,7 +405,6 @@ class ClientTrader(IClientTrader):
                 pass
         if price_control is not None:
             price_control.set_edit_text(limit_price)
-
 
     def _get_grid_data(self, control_id):
         return self.grid_strategy_instance.get(control_id)
