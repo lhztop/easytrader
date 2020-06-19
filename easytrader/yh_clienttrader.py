@@ -54,7 +54,7 @@ class YHClientTrader(clienttrader.BaseLoginClientTrader):
                 self._app.top_window().Edit3.type_keys(
                     self._handle_verify_code(is_xiadan)
                 )
-                self._app.top_window()["确定" if is_xiadan else "登录"].click()
+                self._app.top_window().Button1.click()
 
                 # detect login is success or not
                 try:
@@ -63,7 +63,7 @@ class YHClientTrader(clienttrader.BaseLoginClientTrader):
                 # pylint: disable=broad-except
                 except Exception:
                     if is_xiadan:
-                        self._app.top_window()["确定"].click()
+                        self._app.top_window().Button1.click()
 
             self._app = pywinauto.Application().connect(
                 path=self._run_exe_path(exe_path), timeout=10
@@ -106,6 +106,7 @@ class YHClientTrader(clienttrader.BaseLoginClientTrader):
     def balance(self):
         self._switch_left_menus(self._config.BALANCE_MENU_PATH)
         return self._get_grid_data(self._config.BALANCE_GRID_CONTROL_ID)
+
     def auto_ipo(self):
         self._switch_left_menus(self._config.AUTO_IPO_MENU_PATH)
         stock_list = self._get_grid_data(self._config.COMMON_GRID_CONTROL_ID)
