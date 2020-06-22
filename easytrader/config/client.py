@@ -10,6 +10,8 @@ def create(broker):
         return CommonConfig
     if broker == "wk":
         return WK
+    if broker == "zxjt":
+        return ZXJT
     raise NotImplementedError
 
 
@@ -135,4 +137,8 @@ class GJ(CommonConfig):
 
 
 class WK(HT):
+    pass
+
+
+class ZXJT(HT):
     pass
