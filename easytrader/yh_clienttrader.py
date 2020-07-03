@@ -51,9 +51,10 @@ class YHClientTrader(clienttrader.BaseLoginClientTrader):
             self._app.top_window().Edit1.type_keys(user)
             self._app.top_window().Edit2.type_keys(password)
             while True:
-                self._app.top_window().Edit3.type_keys(
-                    self._handle_verify_code(is_xiadan)
-                )
+                code = self._handle_verify_code(is_xiadan)
+                self.wait(0.2)
+                self._app.top_window().Edit3.type_keys(code)
+                self.wait(0.1)
                 self._app.top_window().Button1.click()
 
                 # detect login is success or not
@@ -89,6 +90,7 @@ class YHClientTrader(clienttrader.BaseLoginClientTrader):
             control_id=1499 if is_xiadan else 22202
         )
         control.click()
+        self.wait(0.1)
 
         file_path = tempfile.mktemp()
         if is_xiadan:
@@ -158,12 +160,15 @@ class ZXJTClientTrader(YHClientTrader):
                 except RuntimeError:
                     pass
 
-            self._app.top_window().Edit1.type_keys(user)
-            self._app.top_window().Edit2.type_keys(password)
+            code = self._handle_verify_code(is_xiadan)
+            self._app.top_window().Edit1.set_edit_text(user)
+            self.wait(0.1)
+            self._app.top_window().Edit2.set_edit_text(password)
+            self.wait(0.1)
             while True:
-                self._app.top_window().Edit7.type_keys(
-                    self._handle_verify_code(is_xiadan)
-                )
+                edit7 = self._app.top_window().child_window(control_id=1003, class_name="Edit")
+                edit7.set_edit_text(code)
+                self.wait(0.1)
                 self._app.top_window().Button1.click()
 
                 # detect login is success or not
@@ -174,6 +179,8 @@ class ZXJTClientTrader(YHClientTrader):
                 except Exception:
                     if is_xiadan:
                         self._app.top_window().Button1.click()
+                self.wait(0.5)
+                code = self._handle_verify_code(is_xiadan)
 
             self._app = pywinauto.Application().connect(
                 path=self._run_exe_path(exe_path), timeout=10
