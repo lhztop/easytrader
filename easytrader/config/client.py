@@ -10,6 +10,8 @@ def create(broker):
         return CommonConfig
     if broker == "wk":
         return WK
+    if broker == "wk_credit":
+        return WKCREDIT
     if broker == "zxjt":
         return ZXJT
     raise NotImplementedError
@@ -19,6 +21,7 @@ class CommonConfig:
     DEFAULT_EXE_PATH: str = ""
     TITLE = "网上股票交易系统5.0"
 
+    LEFT_MENU_CONTROL_ID = 129
     TRADE_SECURITY_CONTROL_ID = 1032
     TRADE_PRICE_CONTROL_ID = 1033
     TRADE_AMOUNT_CONTROL_ID = 1034
@@ -33,11 +36,19 @@ class CommonConfig:
     COMMON_GRID_LEFT_MARGIN = 10
     COMMON_GRID_FIRST_ROW_HEIGHT = 30
     COMMON_GRID_ROW_HEIGHT = 16
+    TOOLBAR_REFRESH_INDEX = 3
 
     BALANCE_MENU_PATH = ["查询[F4]", "资金股票"]
     POSITION_MENU_PATH = ["查询[F4]", "资金股票"]
     TODAY_ENTRUSTS_MENU_PATH = ["查询[F4]", "当日委托"]
     TODAY_TRADES_MENU_PATH = ["查询[F4]", "当日成交"]
+    LIMIT_BUY_MENU_PATH= ["买入[F1]"]
+    LIMIT_SELL_MENU_PATH = ["卖出[F2]"]
+    MARKET_BUY_MENU_PATH = ["市价委托", "买入"]
+    MARKET_SELL_MENU_PATH = ["市价委托", "卖出"]
+    CANCEL_ORDER_MENU_PATH = ["撤单[F3]"]
+
+
 
     BALANCE_CONTROL_ID_GROUP = {
         "资金余额": 1012,
@@ -142,3 +153,36 @@ class WK(HT):
 
 class ZXJT(HT):
     pass
+
+
+class WKCREDIT(HT):
+
+    LEFT_MENU_CONTROL_ID = 513
+    # TRADE_SECURITY_CONTROL_ID = 1032
+    # TRADE_PRICE_CONTROL_ID = 1033
+    # TRADE_AMOUNT_CONTROL_ID = 1034
+    #
+    # TRADE_SUBMIT_CONTROL_ID = 1006
+    #
+    # TRADE_MARKET_TYPE_CONTROL_ID = 1541
+
+    COMMON_GRID_CONTROL_ID = 1047
+    BALANCE_GRID_CONTOL_ID = 1038
+
+    BALANCE_CONTROL_ID_GROUP = {
+        "资金余额": 10006,
+        "可用金额": 10007,
+        "可取金额": 10025,
+        "股票市值": 10011,
+        "总资产": 10004,
+    }
+
+    BALANCE_MENU_PATH = ["查　　询", "资金股份查询"]
+    POSITION_MENU_PATH = ["查　　询", "资金股份查询"]
+    TODAY_ENTRUSTS_MENU_PATH = ["查　　询", "委托查询"]
+    TODAY_TRADES_MENU_PATH = ["查　　询", "成交查询"]
+    LIMIT_BUY_MENU_PATH = ["限价委托", "担保证券买入"]
+    LIMIT_SELL_MENU_PATH = ["限价委托", "担保证券卖出"]
+    MARKET_BUY_MENU_PATH = ["市价委托", "担保证券买入"]
+    MARKET_SELL_MENU_PATH = ["市价委托", "担保证券卖出"]
+    CANCEL_ORDER_MENU_PATH = ["委托撤单"]

@@ -46,6 +46,10 @@ def use(broker, debug=True, **kwargs):
         from .ht_clienttrader import WKClientTrader
         return WKClientTrader()
 
+    if broker.lower() in ["wk_credit_client", "五矿信用客户端"]:
+        from .ht_clienttrader import WKCreditClientTrader
+        return WKCreditClientTrader()
+
     if broker.lower() in ["gj_client", "国金客户端"]:
         from .gj_clienttrader import GJClientTrader
         return GJClientTrader()

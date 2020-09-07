@@ -16,6 +16,7 @@ import re
 from . import grid_strategies, helpers, pop_dialog_handler
 from .config import client
 from win32gui import SetForegroundWindow, ShowWindow
+from pywinauto.controls.common_controls import _toolbar_button
 import logging
 
 if not sys.platform.startswith("darwin"):
@@ -114,7 +115,7 @@ class ClientTrader(IClientTrader):
 
     @property
     def balance(self):
-        self._switch_left_menus(["查询[F4]", "资金股票"])
+        self._switch_left_menus(self._config.BALANCE_MENU_PATH)
 
         return self._get_balance_from_statics()
 
@@ -130,26 +131,26 @@ class ClientTrader(IClientTrader):
 
     @property
     def position(self):
-        self._switch_left_menus(["查询[F4]", "资金股票"])
+        self._switch_left_menus(self._config.POSITION_MENU_PATH)
 
         return self._get_grid_data(self._config.COMMON_GRID_CONTROL_ID)
 
     @property
     def today_entrusts(self):
-        self._switch_left_menus(["查询[F4]", "当日委托"])
+        self._switch_left_menus(self._config.TODAY_ENTRUSTS_MENU_PATH)
 
         return self._get_grid_data(self._config.COMMON_GRID_CONTROL_ID)
 
     @property
     def today_trades(self):
-        self._switch_left_menus(["查询[F4]", "当日成交"])
+        self._switch_left_menus(self._config.TODAY_TRADES_MENU_PATH)
 
         return self._get_grid_data(self._config.COMMON_GRID_CONTROL_ID)
 
     @property
     def cancel_entrusts(self):
         self.refresh()
-        self._switch_left_menus(["撤单[F3]"])
+        self._switch_left_menus(self._config.CANCEL_ORDER_MENU_PATH)
 
         return self._get_grid_data(self._config.COMMON_GRID_CONTROL_ID)
 
@@ -167,13 +168,13 @@ class ClientTrader(IClientTrader):
 
     @perf_clock()
     def buy(self, security, price, amount, **kwargs):
-        self._switch_left_menus(["买入[F1]"])
+        self._switch_left_menus(self._config.LIMIT_BUY_MENU_PATH)
 
         return self.trade(security, price, amount)
 
     @perf_clock()
     def sell(self, security, price, amount, **kwargs):
-        self._switch_left_menus(["卖出[F2]"])
+        self._switch_left_menus(self._config.LIMIT_SELL_MENU_PATH)
 
         return self.trade(security, price, amount)
 
@@ -190,7 +191,7 @@ class ClientTrader(IClientTrader):
 
         :return: {'entrust_no': '委托单号'}
         """
-        self._switch_left_menus(["市价委托", "买入"])
+        self._switch_left_menus(self._config.MARKET_BUY_MENU_PATH)
 
         return self.market_trade(security, amount, ttype, limit_price=limit_price)
 
@@ -206,7 +207,7 @@ class ClientTrader(IClientTrader):
         :param limit_price: 科创板 限价
         :return: {'entrust_no': '委托单号'}
         """
-        self._switch_left_menus(["市价委托", "卖出"])
+        self._switch_left_menus(self._config.MARKET_SELL_MENU_PATH)
 
         return self.market_trade(security, amount, ttype, limit_price=limit_price)
 
@@ -449,7 +450,7 @@ class ClientTrader(IClientTrader):
         while True:
             try:
                 handle = self._main.child_window(
-                    control_id=129, class_name="SysTreeView32"
+                    control_id=self._config.LEFT_MENU_CONTROL_ID, class_name="SysTreeView32"
                 )
                 if count <= 0:
                     return handle
@@ -474,7 +475,10 @@ class ClientTrader(IClientTrader):
         ).double_click(coords=(x, y))
 
     def refresh(self):
-        self._switch_left_menus(["买入[F1]"], sleep=0.05)
+        tool_bar = self.main.wrapper_object().get_toolbar()
+        if tool_bar:
+            btn = _toolbar_button(self._config.TOOLBAR_REFRESH_INDEX, tool_bar)
+            btn.click()
 
     @perf_clock()
     def _handle_pop_dialogs(
