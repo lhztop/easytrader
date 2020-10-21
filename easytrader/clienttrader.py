@@ -138,13 +138,11 @@ class ClientTrader(IClientTrader):
     @property
     def today_entrusts(self):
         self._switch_left_menus(self._config.TODAY_ENTRUSTS_MENU_PATH)
-
         return self._get_grid_data(self._config.COMMON_GRID_CONTROL_ID)
 
     @property
     def today_trades(self):
         self._switch_left_menus(self._config.TODAY_TRADES_MENU_PATH)
-
         return self._get_grid_data(self._config.COMMON_GRID_CONTROL_ID)
 
     @property
