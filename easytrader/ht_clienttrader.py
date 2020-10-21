@@ -254,8 +254,8 @@ class WKCreditClientTrader(HTClientTrader):
         #     print(tr.GetItem([i]).text())
         # self.wait(2)
 
-        @property
-        def today_entrusts(self):
-            self._switch_left_menus(self._config.TODAY_ENTRUSTS_MENU_PATH)
-            self.refresh()
-            return self._get_grid_data(self._config.COMMON_GRID_CONTROL_ID)
+    @property
+    def today_entrusts(self):
+        self._switch_left_menus(self._config.TODAY_ENTRUSTS_MENU_PATH)
+        self.refresh()
+        return self._get_grid_data(self._config.COMMON_GRID_CONTROL_ID)
