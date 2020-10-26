@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
-import re
 from datetime import datetime
 from threading import Thread
 
-from . import exceptions
-from .follower import BaseFollower
-from .log import log
+from easytrader import exceptions
+from easytrader.follower import BaseFollower
+from easytrader.log import logger
 
 
 class JoinQuantFollower(BaseFollower):
@@ -32,14 +31,14 @@ class JoinQuantFollower(BaseFollower):
         self.s.headers.update({"cookie": set_cookie})
 
     def follow(
-        self,
-        users,
-        strategies,
-        track_interval=1,
-        trade_cmd_expire_seconds=120,
-        cmd_cache=True,
-        entrust_prop="limit",
-        send_interval=0,
+            self,
+            users,
+            strategies,
+            track_interval=1,
+            trade_cmd_expire_seconds=120,
+            cmd_cache=True,
+            entrust_prop="limit",
+            send_interval=0,
     ):
         """跟踪joinquant对应的模拟交易，支持多用户多策略
         :param users: 支持easytrader的用户对象，支持使用 [] 指定多个用户
@@ -67,7 +66,7 @@ class JoinQuantFollower(BaseFollower):
                 strategy_id = self.extract_strategy_id(strategy_url)
                 strategy_name = self.extract_strategy_name(strategy_url)
             except:
-                log.error("抽取交易id和策略名失败, 无效的模拟交易url: %s", strategy_url)
+                logger.error("抽取交易id和策略名失败, 无效的模拟交易url: %s", strategy_url)
                 raise
             strategy_worker = Thread(
                 target=self.track_strategy_worker,
@@ -76,19 +75,26 @@ class JoinQuantFollower(BaseFollower):
             )
             strategy_worker.start()
             workers.append(strategy_worker)
-            log.info("开始跟踪策略: %s", strategy_name)
+            logger.info("开始跟踪策略: %s", strategy_name)
         for worker in workers:
             worker.join()
 
-    @staticmethod
-    def extract_strategy_id(strategy_url):
-        return re.search(r"(?<=backtestId=)\w+", strategy_url).group()
+    # @staticmethod
+    # def extract_strategy_id(strategy_url):
+    #     return re.search(r"(?<=backtestId=)\w+", strategy_url).group()
+    #
+    # def extract_strategy_name(self, strategy_url):
+    #     rep = self.s.get(strategy_url)
+    #     return self.re_find(
+    #         r'(?<=title="点击修改策略名称"\>).*(?=\</span)', rep.content.decode("utf8")
+    #     )
+    def extract_strategy_id(self, strategy_url):
+        rep = self.s.get(strategy_url)
+        return self.re_search(r'name="backtest\[backtestId\]"\s+?value="(.*?)">', rep.content.decode("utf8"))
 
     def extract_strategy_name(self, strategy_url):
         rep = self.s.get(strategy_url)
-        return self.re_find(
-            r'(?<=title="点击修改策略名称"\>).*(?=\</span)', rep.content.decode("utf8")
-        )
+        return self.re_search(r'class="backtest_name".+?>(.*?)</span>', rep.content.decode("utf8"))
 
     def create_query_transaction_params(self, strategy):
         today_str = datetime.today().strftime("%Y-%m-%d")
@@ -102,7 +108,7 @@ class JoinQuantFollower(BaseFollower):
     @staticmethod
     def stock_shuffle_to_prefix(stock):
         assert (
-            len(stock) == 11
+                len(stock) == 11
         ), "stock {} must like 123456.XSHG or 123456.XSHE".format(stock)
         code = stock[:6]
         if stock.find("XSHG") != -1:
@@ -120,7 +126,7 @@ class JoinQuantFollower(BaseFollower):
 
             time_str = "{} {}".format(transaction["date"], transaction["time"])
             transaction["datetime"] = datetime.strptime(
-                time_str, "%Y-%m-%d %H:%M"
+                time_str, "%Y-%m-%d %H:%M:%S"
             )
 
             stock = self.re_find(r"\d{6}\.\w{4}", transaction["stock"])

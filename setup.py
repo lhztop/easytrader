@@ -77,7 +77,7 @@ return::
 
 setup(
     name="easytrader",
-    version="0.18.4",
+    version="0.22.0",
     description="A utility for China Stock Trade",
     long_description=long_desc,
     author="shidenggui",
@@ -88,10 +88,9 @@ setup(
     install_requires=[
         "requests",
         "six",
-        "rqopen-client",
         "easyutils",
         "flask",
-        "pywinauto",
+        "pywinauto==0.6.6",
         "pillow",
         "pandas",
     ],
@@ -105,7 +104,7 @@ setup(
         "Programming Language :: Python :: 3.5",
         "License :: OSI Approved :: BSD License",
     ],
-    packages=["easytrader", "easytrader.config"],
+    packages=["easytrader", "easytrader.config", "easytrader.utils"],
     package_data={
         "": ["*.jar", "*.json"],
         "config": ["config/*.json"],

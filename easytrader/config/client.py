@@ -6,10 +6,14 @@ def create(broker):
         return HT
     if broker == "gj":
         return GJ
+    if broker == "gf":
+        return GF
     if broker == "ths":
         return CommonConfig
     if broker == "wk":
         return WK
+    if broker == "htzq":
+        return HTZQ
     if broker == "wk_credit":
         return WKCREDIT
     if broker == "zxjt":
@@ -20,6 +24,12 @@ def create(broker):
 class CommonConfig:
     DEFAULT_EXE_PATH: str = ""
     TITLE = "网上股票交易系统5.0"
+
+    # 交易所类型。 深圳A股、上海A股
+    TRADE_STOCK_EXCHANGE_CONTROL_ID = 1003
+
+    # 撤销界面上， 全部撤销按钮
+    TRADE_CANCEL_ALL_ENTRUST_CONTROL_ID = 30001
 
     LEFT_MENU_CONTROL_ID = 129
     TRADE_SECURITY_CONTROL_ID = 1032
@@ -80,6 +90,7 @@ class CommonConfig:
     AUTO_IPO_SELECT_ALL_BUTTON_CONTROL_ID = 1098
     AUTO_IPO_BUTTON_CONTROL_ID = 1006
     AUTO_IPO_MENU_PATH = ["新股申购", "批量新股申购"]
+    AUTO_IPO_NUMBER = '申购数量'
 
 
 class YH(CommonConfig):
@@ -146,10 +157,39 @@ class GJ(CommonConfig):
 
     AUTO_IPO_MENU_PATH = ["新股申购", "新股批量申购"]
 
+class GF(CommonConfig):
+    DEFAULT_EXE_PATH = "C:\\gfzqrzrq\\xiadan.exe"
+    TITLE = "核新网上交易系统"
+
+    GRID_DTYPE = {
+        "操作日期": str,
+        "委托编号": str,
+        "申请编号": str,
+        "合同编号": str,
+        "证券代码": str,
+        "股东代码": str,
+        "资金帐号": str,
+        "资金帐户": str,
+        "发生日期": str,
+    }
+
+    AUTO_IPO_MENU_PATH = ["新股申购", "批量新股申购"]
 
 class WK(HT):
     pass
 
+
+class HTZQ(CommonConfig):
+    DEFAULT_EXE_PATH = r"c:\\海通证券委托\\xiadan.exe"
+
+    BALANCE_CONTROL_ID_GROUP = {
+        "资金余额": 1012,
+        "可用金额": 1016,
+        "可取金额": 1017,
+        "总资产": 1015,
+    }
+
+    AUTO_IPO_NUMBER = '可申购数量'
 
 class ZXJT(HT):
     pass

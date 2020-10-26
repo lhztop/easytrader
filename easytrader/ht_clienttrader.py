@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
+
 import pywinauto
 import pywinauto.clipboard
-from win32gui import SetForegroundWindow
 
+from easytrader import grid_strategies
 from . import clienttrader
-import logging
+
 
 class HTClientTrader(clienttrader.BaseLoginClientTrader):
-
-    login_test_host: bool = True
+    grid_strategy = grid_strategies.Xls
 
     @property
     def broker_type(self):
@@ -42,21 +42,6 @@ class HTClientTrader(clienttrader.BaseLoginClientTrader):
                     break
                 except RuntimeError:
                     pass
-            self.login_test_host = False
-            if self.login_test_host:
-                self._app.top_window().type_keys("%t")
-                self.wait(0.5)
-                try:
-                    self._app.top_window().Button2.wait('enabled',timeout=30, retry_interval=5)
-                    self._app.top_window().Button5.check()  # enable 自动选择
-                    self.wait(0.5)
-                    self._app.top_window().Button3.click()
-                    self.wait(0.3)
-                except Exception as ex:
-                    logging.exception("test speed error", ex)
-                    self._app.top_window().wrapper_object().close()
-                    self.wait(0.3)
-
             self._app.top_window().Edit1.set_focus()
             self._app.top_window().Edit1.type_keys(user)
             self._app.top_window().Edit2.type_keys(password)
@@ -65,14 +50,12 @@ class HTClientTrader(clienttrader.BaseLoginClientTrader):
 
             self._app.top_window().button0.click()
 
-            # detect login is success or not
-            self._app.top_window().wait_not("exists", 100)
-
             self._app = pywinauto.Application().connect(
                 path=self._run_exe_path(exe_path), timeout=10
             )
-        self._close_prompt_windows()
         self._main = self._app.window(title="网上股票交易系统5.0")
+        self._main.wait ( "exists enabled visible ready" , timeout=100 )
+        self._close_prompt_windows ( )
 
     @property
     def balance(self):

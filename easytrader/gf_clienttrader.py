@@ -2,6 +2,7 @@
 import re
 import tempfile
 import time
+import os
 
 import pywinauto
 import pywinauto.clipboard
@@ -10,10 +11,10 @@ from easytrader import clienttrader
 from easytrader.utils.captcha import recognize_verify_code
 
 
-class GJClientTrader(clienttrader.BaseLoginClientTrader):
+class GFClientTrader(clienttrader.BaseLoginClientTrader):
     @property
     def broker_type(self):
-        return "gj"
+        return "gf"
 
     def login(self, user, password, exe_path, comm_password=None, **kwargs):
         """
@@ -42,15 +43,15 @@ class GJClientTrader(clienttrader.BaseLoginClientTrader):
                 except RuntimeError:
                     pass
 
-            self._app.top_window().Edit1.type_keys(user)
-            self._app.top_window().Edit2.type_keys(password)
+            self.type_edit_control_keys(self._app.top_window().Edit1, user)
+            self.type_edit_control_keys(self._app.top_window().Edit2, password)
             edit3 = self._app.top_window().window(control_id=0x3eb)
             while True:
                 try:
                     code = self._handle_verify_code()
-                    edit3.type_keys(code)
+                    self.type_edit_control_keys(edit3, code)
                     time.sleep(1)
-                    self._app.top_window()["确定(Y)"].click()
+                    self._app.top_window()["登录(Y)"].click()
                     # detect login is success or not
                     try:
                         self._app.top_window().wait_not("exists", 5)
@@ -67,7 +68,8 @@ class GJClientTrader(clienttrader.BaseLoginClientTrader):
             self._app = pywinauto.Application().connect(
                 path=self._run_exe_path(exe_path), timeout=10
             )
-        self._main = self._app.window(title="网上股票交易系统5.0")
+        self._main = self._app.window(title_re="""{title}.*""".format(title=self._config.TITLE))
+        self.close_pop_dialog()
 
     def _handle_verify_code(self):
         control = self._app.top_window().window(control_id=0x5db)
@@ -76,5 +78,7 @@ class GJClientTrader(clienttrader.BaseLoginClientTrader):
         file_path = tempfile.mktemp() + ".jpg"
         control.capture_as_image().save(file_path)
         time.sleep(0.2)
-        vcode = recognize_verify_code(file_path, "gj_client")
+        vcode = recognize_verify_code(file_path, "gf_client")
+        if os.path.exists(file_path):
+            os.remove(file_path)
         return "".join(re.findall("[a-zA-Z0-9]+", vcode))
