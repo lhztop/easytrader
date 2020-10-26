@@ -13,7 +13,7 @@ idna==2.7
 itsdangerous==0.24
 jinja2==2.10
 lxml==4.2.3
-markupsafe==1.0
+markupsafe==1.1.1
 numpy==1.15.0; python_version >= '2.7'
 pandas==0.23.3
 pillow==5.2.0
