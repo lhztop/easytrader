@@ -129,7 +129,6 @@ class ClientTrader(IClientTrader):
     @property
     def balance(self):
         self._switch_left_menus(self._config.BALANCE_MENU_PATH)
-
         return self._get_balance_from_statics()
 
     def _init_toolbar(self):
@@ -525,14 +524,10 @@ class ClientTrader(IClientTrader):
 
     @perf_clock
     def _switch_left_menus(self, path, sleep=0.2):
-        self.close_pop_dialog()
         self._get_left_menus_handle().get_item(path).select()
-        self._app.top_window().type_keys('{ESC}')
-        self._app.top_window().type_keys('{F5}')
         self.wait(sleep)
 
     def _switch_left_menus_by_shortcut(self, shortcut, sleep=0.5):
-        self.close_pop_dialog()
         self._app.top_window().type_keys(shortcut)
         self.wait(sleep)
 
