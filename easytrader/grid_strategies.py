@@ -213,4 +213,5 @@ class Xls(BaseStrategy):
             na_filter=False,
         )
         df['证券代码'] = df['证券代码'].replace(r"[^\d]+", "", regex=True)
+        df['合同编号'] = df['合同编号'].replace(r"[^\d]+", "", regex=True)
         return df.to_dict("records")
