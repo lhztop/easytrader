@@ -212,6 +212,8 @@ class Xls(BaseStrategy):
             dtype=self._trader.config.GRID_DTYPE,
             na_filter=False,
         )
-        df['证券代码'] = df['证券代码'].replace(r"[^\d]+", "", regex=True)
-        df['合同编号'] = df['合同编号'].replace(r"[^\d]+", "", regex=True)
+        if '证券代码' in df.columns:
+            df['证券代码'] = df['证券代码'].replace(r"[^\d]+", "", regex=True)
+        if '合同编号' in df.columns:
+            df['合同编号'] = df['合同编号'].replace(r"[^\d]+", "", regex=True)
         return df.to_dict("records")
