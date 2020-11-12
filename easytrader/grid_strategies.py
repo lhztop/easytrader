@@ -212,4 +212,5 @@ class Xls(BaseStrategy):
             dtype=self._trader.config.GRID_DTYPE,
             na_filter=False,
         )
+        df['证券代码'] = df['证券代码'].replace(r"[^\d]+", "", regex=True)
         return df.to_dict("records")
