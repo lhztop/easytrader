@@ -4,7 +4,8 @@ import tempfile
 
 import pywinauto
 
-from . import clienttrader, grid_strategies, helpers
+from . import clienttrader, grid_strategies
+from .utils.captcha import recognize_verify_code
 
 
 class YHClientTrader(clienttrader.BaseLoginClientTrader):
@@ -101,7 +102,7 @@ class YHClientTrader(clienttrader.BaseLoginClientTrader):
             control.capture_as_image(rect).save(file_path, "jpeg")
         else:
             control.capture_as_image().save(file_path, "jpeg")
-        verify_code = helpers.recognize_verify_code(file_path, "yh_client")
+        verify_code = recognize_verify_code(file_path)
         return "".join(re.findall(r"\d+", verify_code))
 
     @property
